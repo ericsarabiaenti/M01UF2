@@ -60,8 +60,6 @@ echo "(14) Test & Send"
 if [ "$DATA" != "OK_FILE_NAME" ]
 then 
 	echo "ERROR 3: BAD FILE_NAME"
-	sleep 1
-	echo "KO_FILE_NAME" | nc $SERVER 3333
 	exit 3
 fi 
 sleep 1
