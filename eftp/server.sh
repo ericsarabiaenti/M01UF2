@@ -1,19 +1,22 @@
 #!/bin/bash
 
-CLIENT="localhost"
+CLIENT=`nc -l -p 3333 -w 0`
+
+sleep 2
+
 echo "Servidor de EFTP"
 
 echo "(0) Listen"
 
 DATA=`nc -l -p 3333 -w 0`
 
-echo $DATA
+echo $DATA 
 
 sleep 1
 
 echo "(3) Test & Send"
 
-if [ "$DATA" != "EFTP 1.0" ]
+if [ "$DATA" != "EFTP 1.0 $CLIENT" ]
 then
 	echo "ERROR 1: BAD HEADER"
 	sleep 1
@@ -63,13 +66,18 @@ echo "(13) Listen"
 DATA=`nc -l -p 3333 -w 0`
 echo $DATA
 
-echo "(16) Test & Store & Send"
-if [ "$DATA" != "$" ]
+echo "(16) Store & Send"
+if [ "$DATA" != "" ]
 then 
 	echo "ERROR 4: BAD DATA"
 	sleep 1
 	echo "KO_DATA" | nc $CLIENT 3333
 	exit 4
 fi
+
+echo $DATA > inbox/$FILE_NAME
 sleep 1
 echo "OK_DATA" | nc -l -p $CLIENT 3333
+
+echo "FIN"
+exit 0

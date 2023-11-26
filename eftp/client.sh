@@ -1,15 +1,17 @@
 #!/bin/bash
 
-SERVER="locahost"
+SERVER="localhost"
 IP=`ip address | grep inet | grep enp0s3 | cut -d " " -f 6 | cut -d "/" -f 1`
 
-echo $IP
+echo $IP | nc $SERVER 3333
+
+sleep 3
 
 echo "Cliente de EFTP"
 
 echo "(1) Send"
 
-echo "EFTP 1.0" | nc $SERVER 3333
+echo "EFTP 1.0 $IP" | nc $SERVER 3333
 
 echo "(2) Listen"
 
@@ -26,6 +28,7 @@ then
 	exit 1
 fi
 
+echo "OK_HEADER"
 echo "BOOOM"
 sleep 1 
 echo "BOOOM" | nc $SERVER 3333
@@ -67,3 +70,12 @@ echo "cat /home/enti/M01UF2/eftp/imgs/fary1.txt" | nc $SERVER 3333
 echo "(15) Listen"
 DATA=`nc -l -p 3333 -w 0`
 echo $DATA
+
+if [ "$DATA" != "OK_DATA" ]
+then
+	echo "ERROR 4: BAD DATA"
+	exit 4
+fi
+
+echo "FIN"
+exit 0
