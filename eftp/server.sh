@@ -1,14 +1,14 @@
 #!/bin/bash
 
-CLIENT=`nc -l -p 3333 -w 0`
 
-sleep 2
+TIMEOUT=1
 
 echo "Servidor de EFTP"
 
 echo "(0) Listen"
 
-DATA=`nc -l -p 3333 -w 0`
+CLIENT=`nc -l -p 3333 -w $TIMEOUT`
+DATA=`nc -l -p 3333 -w $TIMEOUT`
 
 echo $DATA 
 
@@ -29,7 +29,7 @@ echo "OK_HEADER" | nc $CLIENT 3333
 
 echo "(4) Listen"
 
-DATA=`nc -l -p 3333 -w 0`
+DATA=`nc -l -p 3333 -w $TIMEOUT`
 
 echo $DATA
 
@@ -48,11 +48,13 @@ sleep 1
 echo "OK_HANDSHAKE" | nc $CLIENT 3333
 
 echo "(8) Listen"
-DATA=`nc -l -p 3333 -w 0`
-FILE_NAME=echo $DATA | cut -d " " -f 2
+
+DATA=`nc -l -p 3333 -w $TIMEOUT` 
+PREFIX=`echo "$DATA" | cut -d " " -f 1`
 sleep 1
+
 echo "(12) Test & Store & Send"
-if [ "$DATA" != "FILE_NAME $FILE_NAME" ]
+if [ "$PREFIX" != "FILE_NAME" ]
 then 
 	echo "ERROR 3: BAD FILE_NAME"
 	sleep 1
@@ -63,11 +65,11 @@ sleep 1
 echo "OK_FILE_NAME"| nc $CLIENT 3333
 
 echo "(13) Listen"
-DATA=`nc -l -p 3333 -w 0`
+DATA=`nc -l -p 3333 -w $TIMEOUT`
 echo $DATA
 
-echo "(16) Store & Send"
-if [ "$DATA" != "" ]
+echo "(16) Test & Store & Send"
+if [ "$DATA" == "" ]
 then 
 	echo "ERROR 4: BAD DATA"
 	sleep 1

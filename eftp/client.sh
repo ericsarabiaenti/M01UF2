@@ -5,7 +5,7 @@ IP=`ip address | grep inet | grep enp0s3 | cut -d " " -f 6 | cut -d "/" -f 1`
 
 echo $IP | nc $SERVER 3333
 
-sleep 3
+TIMEOUT=1
 
 echo "Cliente de EFTP"
 
@@ -15,7 +15,7 @@ echo "EFTP 1.0 $IP" | nc $SERVER 3333
 
 echo "(2) Listen"
 
-DATA=`nc -l -p 3333 -w 0`
+DATA=`nc -l -p 3333 -w $TIMEOUT`
 echo $DATA
 
 sleep 1
@@ -34,7 +34,7 @@ sleep 1
 echo "BOOOM" | nc $SERVER 3333
 
 echo "(6) Listen"
-DATA=`nc -l -p 3333 -w 0`
+DATA=`nc -l -p 3333 -w $TIMEOUT`
 echo $DATA
 
 sleep 1
@@ -54,7 +54,7 @@ echo "(10) Send"
 echo "FILE_NAME fary1.txt" | nc $SERVER 3333
 
 echo "(11) Listen"
-DATA=`nc -l -p 3333 -w 0`
+DATA=`nc -l -p 3333 -w $TIMEOUT`
 echo $DATA
 
 sleep 1
@@ -68,7 +68,7 @@ fi
 sleep 1
 echo "cat /home/enti/M01UF2/eftp/imgs/fary1.txt" | nc $SERVER 3333
 echo "(15) Listen"
-DATA=`nc -l -p 3333 -w 0`
+DATA=`nc -l -p 3333 -w $TIMEOUT`
 echo $DATA
 
 if [ "$DATA" != "OK_DATA" ]
@@ -78,4 +78,5 @@ then
 fi
 
 echo "FIN"
+
 exit 0
