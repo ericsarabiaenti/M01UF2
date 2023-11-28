@@ -51,7 +51,13 @@ fi
 sleep 1
 
 echo "(10) Send" 
-echo "FILE_NAME fary1.txt" | nc $SERVER 3333
+
+FILE_NAME="fary1.txt"
+FILE_MD5=`echo $FILE_NAME | md5sum | cut -d " " -f 1`
+
+echo "FILE_NAME $FILE_NAME $FILE_MD5" | nc $SERVER 3333 |  
+
+sleep 1
 
 echo "(11) Listen"
 DATA=`nc -l -p 3333 -w $TIMEOUT`
@@ -65,9 +71,12 @@ then
 	echo "ERROR 3: BAD FILE_NAME"
 	exit 3
 fi 
+
 sleep 1
-echo "cat /home/enti/M01UF2/eftp/imgs/fary1.txt" | nc $SERVER 3333
+cat imgs/fary1.txt | nc $SERVER 3333
+
 echo "(15) Listen"
+
 DATA=`nc -l -p 3333 -w $TIMEOUT`
 echo $DATA
 
@@ -76,6 +85,15 @@ then
 	echo "ERROR 4: BAD DATA"
 	exit 4
 fi
+
+echo "(18) Send"
+FILE_MD5=`cat imgs/fary1.txt | md5sum | cut -d " " -f 1`
+echo "FILE_MD5 $FILE_MD5" | nc $SERVER 3333
+
+echo "(19) Listen"
+
+DATA=`nc -l -p 3333 -w $TIMEOUT`
+echo "$DATA"
 
 echo "FIN"
 

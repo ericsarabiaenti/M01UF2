@@ -50,8 +50,10 @@ echo "OK_HANDSHAKE" | nc $CLIENT 3333
 echo "(8) Listen"
 
 DATA=`nc -l -p 3333 -w $TIMEOUT` 
+echo $DATA
+
 PREFIX=`echo "$DATA" | cut -d " " -f 1`
-sleep 1
+echo "$PREFIX"
 
 echo "(12) Test & Store & Send"
 if [ "$PREFIX" != "FILE_NAME" ]
@@ -64,11 +66,27 @@ fi
 sleep 1
 echo "OK_FILE_NAME"| nc $CLIENT 3333
 
+FILE_NAME=`echo $DATA | cut -d " " -f 2`
+FILE_MD5=`echo $DATA | cut -d " " -f 3`
+FILE_MD5_LOCAL=`echo $FILE_NAME | md5sum | cut -d " " -f 1`
+
+if [ "$FILE_MD5" != "$FILE_MD5_LOCAL" ]
+then 
+	echo "ERROR 3: BAD FILE NAME MD5"
+	sleep 1
+	echo "KO_FILE_NAME" | nc $CLIENT 3333
+	exit 3
+fi
+echo "OK_FILE_MD5" | nc $CLIENT 3333
+
 echo "(13) Listen"
-DATA=`nc -l -p 3333 -w $TIMEOUT`
+
+nc -l -p 3333 -w $TIMEOUT > inbox/$FILE_NAME
+DATA=`cat inbox/fary1.txt`
 echo $DATA
 
 echo "(16) Test & Store & Send"
+
 if [ "$DATA" == "" ]
 then 
 	echo "ERROR 4: BAD DATA"
@@ -77,9 +95,36 @@ then
 	exit 4
 fi
 
-echo $DATA > inbox/$FILE_NAME
 sleep 1
-echo "OK_DATA" | nc -l -p $CLIENT 3333
+
+echo "OK_DATA" | nc $CLIENT 3333
+
+echo "(17) Listen"
+
+DATA=`nc -l -p 3333 -w $TIMEOUT`
+echo $DATA
+FILE_MD5_NAME=`echo $DATA | cut -d " " -f 1`
+
+echo "(20) Test & Send"
+
+if [ "FILE_MD5" != "$FILE_MD5_NAME" ]
+then 
+	echo "ERROR 5: BAD FILE_MD5"
+	sleep 1
+	echo "BAD FILE_MD5" | nc $CLIENT 3333
+	exit 5
+fi
+echo "OK_FILE_MD5" | nc $CLIENT 3333
+
+FILE_MD5=`echo $DATA | cut -d " " -f 2`
+FILE_HASH=`cat inbox/fary1.txt | md5sum | cut -d " " -f 2`
+if [ "$FILE_MD5" != "$FILE_HASH" ]
+then 
+	echo "ERROR 5: BAD FILE_HASH"
+	sleep 1
+	echo "BAD FILE_HASH" | nc $CLIENT 3333
+	exit 5
+fi
 
 echo "FIN"
 exit 0
