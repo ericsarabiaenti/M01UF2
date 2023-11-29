@@ -117,7 +117,8 @@ fi
 echo "OK_FILE_MD5" | nc $CLIENT 3333
 
 FILE_MD5=`echo $DATA | cut -d " " -f 2`
-FILE_HASH=`cat inbox/fary1.txt | md5sum | cut -d " " -f 2`
+FILE_HASH=`cat inbox/fary1.txt | md5sum | cut -d " " -f 1`
+
 if [ "$FILE_MD5" != "$FILE_HASH" ]
 then 
 	echo "ERROR 5: BAD FILE_HASH"
@@ -125,6 +126,7 @@ then
 	echo "BAD FILE_HASH" | nc $CLIENT 3333
 	exit 5
 fi
+echo "OK_FILE_HASH" | nc $CLIENT 3333
 
 echo "FIN"
 exit 0
