@@ -80,13 +80,14 @@ echo "(15) Listen"
 DATA=`nc -l -p 3333 -w $TIMEOUT`
 echo $DATA
 
+echo "(18) Test & Send"
+
 if [ "$DATA" != "OK_DATA" ]
 then
 	echo "ERROR 4: BAD DATA"
 	exit 4
 fi
 
-echo "(18) Send"
 FILE_MD5=`cat imgs/fary1.txt | md5sum | cut -d " " -f 1`
 echo "FILE_MD5 $FILE_MD5" | nc $SERVER 3333
 
