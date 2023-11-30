@@ -18,7 +18,7 @@ sleep 1
 
 echo "(3) Test & Send"
 
-if [ "$PREFIX $PREFIX" != "EFTP 1.0" ]
+if [ "$PREFIX $VERSION" != "EFTP 1.0" ]
 then
 	echo "ERROR 1: BAD HEADER"
 	sleep 1

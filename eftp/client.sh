@@ -1,8 +1,20 @@
 #!/bin/bash
 
-SERVER="10.65.0.57"
+echo $#
+
+if [ $# = 0 ] 
+then 
+	SERVER="localhost"
+elif [ $# = 1 ]
+then 
+	SERVER=$1
+fi 
+
+
 IP=`ip address | grep inet | grep enp0s3 | cut -d " " -f 6 | cut -d "/" -f 1`
+
 PORT="3333"
+
 TIMEOUT=1
 
 echo "Cliente de EFTP"
