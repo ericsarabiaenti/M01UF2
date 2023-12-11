@@ -58,13 +58,38 @@ fi
 sleep 1
 echo "OK_HANDSHAKE" | nc $CLIENT $PORT
 
-echo "(8) Listen"
+echo "(7a) Listen"
+
+DATA=`nc -l -p $PORT -w $TIMEOUT`
+echo $DATA
+
+echo "(7b) Test & Send"
+
+PREFIX=`echo $DATA | cut -d " " -f 1`
+
+if [ "NUM_FILES" != "$PREFIX" ]
+then
+	echo "BAD NUM_FILES PREFIX: ERROR 2"
+	echo "KO_FILE_NUM" | nc $CLIENT $PORT
+	exit 2
+fi
+
+echo "OK_NUM_FILES" | nc $CLIENT $PORT
+
+FILE_NUM=`echo $DATA | cut -d " " -f 2`
+
+echo "(8a) Loop" 
+
+for N in `seq $FILE_NUM` 
+do
+
+echo "(8b) Listen"
 
 DATA=`nc -l -p $PORT -w $TIMEOUT` 
 echo $DATA
 
 PREFIX=`echo "$DATA" | cut -d " " -f 1`
-echo "$PREFIX"
+echo $PREFIX
 
 echo "(12) Test & Store & Send"
 if [ "$PREFIX" != "FILE_NAME" ]
@@ -93,7 +118,7 @@ echo "OK_FILE_MD5" | nc $CLIENT $PORT
 echo "(13) Listen"
 
 nc -l -p $PORT -w $TIMEOUT > inbox/$FILE_NAME
-DATA=`cat inbox/fary1.txt`
+DATA=`cat inbox/$FILE_NAME`
 echo $DATA
 
 echo "(16) Test & Store & Send"
@@ -127,7 +152,7 @@ then
 fi
 
 FILE_MD5_HASH=`echo $DATA | cut -d " " -f 2`
-FILE_HASH=`cat inbox/fary1.txt | md5sum | cut -d " " -f 1`
+FILE_HASH=`cat inbox/$FILE_NAME | md5sum | cut -d " " -f 1`
 
 if [ "$FILE_MD5_HASH" != "$FILE_HASH" ]
 then 
@@ -137,6 +162,8 @@ then
 	exit 5
 fi
 echo "OK_FILE_MD5" | nc $CLIENT $PORT
+
+done
 
 echo "FIN"
 exit 0
