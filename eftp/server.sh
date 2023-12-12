@@ -74,7 +74,7 @@ then
 	exit 2
 fi
 
-echo "OK_NUM_FILES" | nc $CLIENT $PORT
+echo "OK_FILE_NUM" | nc $CLIENT $PORT
 
 FILE_NUM=`echo $DATA | cut -d " " -f 2`
 

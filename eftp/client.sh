@@ -5,7 +5,7 @@ echo $#
 if [ $# = 0 ] 
 then 
 	SERVER="localhost"
-elif [ $# = 1 ]
+elif [ $# -ge 1 ]
 then 
 	SERVER=$1
 fi 
@@ -18,6 +18,14 @@ PORT="3333"
 TIMEOUT=1
 
 echo "Cliente de EFTP"
+
+if [ $# = 2 ]
+then
+	echo "(-1) Reset"
+	echo "RESET" | nc $SERVER $PORT
+	
+	sleep 2
+fi 
 
 echo "(1) Send"
 
@@ -70,7 +78,7 @@ echo "(9b) Listen & Test"
 DATA=`nc -l -p $PORT -w $TIMEOUT`
 echo $DATA
 
-if [ "$DATA" != "OK_NUM_FILES" ]
+if [ "$DATA" != "OK_FILE_NUM" ]
 then 
 	echo "BAD NUM_FILES: ERROR 2"
 	exit 2
@@ -105,7 +113,7 @@ then
 fi 
 
 sleep 1
-cat imgs/fary1.txt | nc $SERVER $PORT
+cat imgs/$FILE_NAME | nc $SERVER $PORT
 
 echo "(15) Listen"
 
@@ -120,7 +128,7 @@ then
 	exit 4
 fi
 
-FILE_MD5=`cat imgs/fary1.txt | md5sum | cut -d " " -f 1`
+FILE_MD5=`cat imgs/$FILE_NAME | md5sum | cut -d " " -f 1`
 echo "FILE_MD5 $FILE_MD5" | nc $SERVER $PORT
 
 echo "(19) Listen"
