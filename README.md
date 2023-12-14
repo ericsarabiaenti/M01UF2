@@ -1,3 +1,5 @@
 # M01UF2
-Ejercicios de clase de cyberseguridad 2023-2024
-PUTO QUIEN LO LEA :)
+
+Ejercicios de ciberseguridad.
+
+Hecho por Eric Sarabia (esto lo hago por si me copian jijijija).
